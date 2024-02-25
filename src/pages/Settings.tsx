@@ -4,15 +4,15 @@ import bgimage from '../images/bgimg.svg';
 import { database } from '../main';
 import { ref, set, child, get } from 'firebase/database';
 
-const Settings = () => {
-  const [vehicleNumber, setVehicleNumber] = useState('');
-  const [vehicleNumberError, setVehicleNumberError] = useState('');
+const Settings: React.FC = () => {
+  const [vehicleNumber, setVehicleNumber] = useState<string>('');
+  const [vehicleNumberError, setVehicleNumberError] = useState<string>('');
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setVehicleNumber(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!vehicleNumber) {
       setVehicleNumberError('Vehicle number is required');
@@ -31,7 +31,7 @@ const Settings = () => {
     }
   };
 
-  const handleCheck = (vehicleNo) => {
+  const handleCheck = (vehicleNo: string): boolean => {
     const dbRef = ref(database);
     const prkEnt = '755956';
 

@@ -10,36 +10,20 @@ interface ParkingData {
   exitTime: string;
   phoneNo: string;
   vehicleNo: string;
+  refId: string;
 }
 const OfflineBookings = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [prkData, setPrkData] = useState<ParkingData[]>([]);
-  const [keyVehicleNo, setKeyVehicleNo] = useState<string[]>([]);
 
   const fetchData = (searchQuery: string = '') => {
-    const dbRef = ref(
-      database,
-      '/Parking/parkingEntity/755956/offlineEntries/',
-    );
+    const dbRef = ref(database, '/Parking/parkingEntity/755956/offlineLedger/');
     onValue(dbRef, (snapshot) => {
-      const data = Object.values(snapshot.val()) as ParkingData[]; // Type assertion
-      const KeyVehicleNo = Object.keys(snapshot.val());
-      setKeyVehicleNo(KeyVehicleNo);
+      const data = Object.values(snapshot.val()).reverse() as ParkingData[]; // Type assertion
 
       const filteredData = data.filter((item) =>
         item.vehicleNo.toLowerCase().includes(searchQuery.toLowerCase()),
       );
-
-      const headerElement: ParkingData = {
-        name: 'Customer Name',
-        vehicleNo: 'Vehicle No.',
-        phoneNo: 'Phone No.',
-        entryTime: 'Entry Time',
-        exitTime: 'Exit Time',
-      };
-
-      // const rawData = data.reverse();
-      // rawData.unshift(headerElement); // Reverse the array and add headerElement
 
       setPrkData(filteredData);
     });
@@ -163,6 +147,7 @@ const OfflineBookings = () => {
               <TableHeaderLabel label="Exit Time" />
               <TableHeaderLabel label="Duration" />
               <TableHeaderLabel label="Amount" />
+              <TableHeaderLabel label="Ticket ID" />
             </tr>
           </thead>
 
@@ -176,7 +161,6 @@ const OfflineBookings = () => {
                 </td>
                 <td className="border-b border-[#fff] py-3 px-0 dark:border-strokedark xl:pl-0 w-54  ">
                   <h5 className="font-normal text-sm text-[#6E7079] dark:text-white text-center">
-                    {/* {handleVehicleNo(keyVehicleNo[key])} */}
                     {handleVehicleNo(packageItem.vehicleNo)}
                   </h5>
                 </td>
@@ -205,6 +189,11 @@ const OfflineBookings = () => {
                 <td className="border-b border-[#fff] py-1 px-0 dark:border-strokedark ">
                   <p className="text-sm text-[#6E7079] dark:text-white pl-0  text-center  ">
                     {handlePrice(packageItem.entryTime, packageItem.exitTime)}
+                  </p>
+                </td>
+                <td className="border-b border-[#fff] py-1 px-0 dark:border-strokedark ">
+                  <p className="text-sm text-[#6E7079] dark:text-white pl-0  text-center  ">
+                    {packageItem.refId}
                   </p>
                 </td>
               </tr>

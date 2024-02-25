@@ -33,7 +33,7 @@ const Bookings: React.FC = () => {
     const onlineRef = ref(database, '/Parking/parkingEntity/755956/bookings/');
     const offlineRef = ref(
       database,
-      '/Parking/parkingEntity/755956/offlineEntries/',
+      '/Parking/parkingEntity/755956/offlineLedger/',
     );
 
     onValue(onlineRef, (snapshot) => {
