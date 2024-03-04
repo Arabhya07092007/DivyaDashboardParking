@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Logo from '../../images/logo/logo.svg';
 import Header from '../../components/Header/Header';
 
@@ -78,7 +78,7 @@ const SignUp = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        Contact US
+                        Contact Us
                       </a>
                     </div>
                     <div>

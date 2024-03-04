@@ -15,6 +15,7 @@ import Tables from './pages/Tables';
 import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
 import Bookings from './pages/Bookings';
+import Loading from './components/Loading';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -35,6 +36,16 @@ function App() {
       <Routes>
         <Route
           index
+          element={
+            <>
+              <PageTitle title="Divya Ayodhya Parking Admin" />
+              <Loading />
+            </>
+          }
+        />
+        <Route
+          index
+          path="/signup"
           element={
             <>
               <PageTitle title="Login Page" />
