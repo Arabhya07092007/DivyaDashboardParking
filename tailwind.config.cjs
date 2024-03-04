@@ -8,6 +8,7 @@ module.exports = {
     fontFamily: {
       satoshi: ['Satoshi', 'sans-serif'],
       inter: ['Inter'],
+      baloo: ['Baloo 2'],
     },
     screens: {
       '2xsm': '375px',
