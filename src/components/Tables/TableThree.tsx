@@ -4,6 +4,8 @@ import { ref, onValue } from 'firebase/database';
 import { database } from '../../main';
 import TableHeaderLabel from './TableHeaderLabel';
 import CsvDownloadButton from 'react-json-to-csv';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 interface ParkingData {
   username: string;
@@ -26,13 +28,13 @@ const TableThree = () => {
   const fetchData = (searchQuery: string = '') => {
     const dbRef = ref(database, '/Parking/parkingEntity/755956/bookings/');
     onValue(dbRef, (snapshot) => {
-      const data = Object.values(snapshot.val()) as ParkingData[]; // Type assertion
+      const data = Object.values(snapshot.val()) as ParkingData[];
       const filteredData = data.filter(
         (item) =>
           item.vehicleNo.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.username.toLowerCase().includes(searchQuery.toLowerCase()),
       );
-      setPrkData(filteredData.reverse()); // Reverse the array
+      setPrkData(filteredData.reverse());
     });
   };
 
@@ -40,7 +42,6 @@ const TableThree = () => {
     fetchData(searchTerm);
   }, [searchTerm]);
 
-  // Filtering logic based on search term
   const filteredData = prkData.filter(
     (packageItem) =>
       packageItem.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -70,6 +71,53 @@ const TableThree = () => {
         gadiSankhya.slice(5, 9)
       );
     }
+  };
+
+  const exportToExcel = () => {
+    console.log(prkData);
+
+    let excelData: {
+      'S.No.': number;
+      'Customer Name': string;
+      'Vehicle No.': string;
+      'Phone No.': string;
+      Duration: string;
+      'Entry Time': string;
+      'Exit Time': string;
+      Amount: string;
+    }[] = [];
+    prkData.map((item, index) => {
+      const data = {
+        'S.No.': index + 1,
+        'Customer Name': item.username,
+        'Vehicle No.': handleVehicleNo(item.vehicleNo),
+        'Phone No.': '+91 ' + item.phoneNo,
+        Duration: item.duration,
+        'Entry Time': item.entryTime ? item.entryTime.slice(16, 25) : '--',
+        'Exit Time': item.exitTime ? item.exitTime.slice(16, 25) : '--',
+        Amount: item.amount,
+      };
+
+      console.log(data);
+
+      excelData.push(data);
+    });
+
+    console.log(excelData);
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
+    });
+
+    saveAs(blob, `OnlineBookings_${new Date().toLocaleDateString()}.xlsx`);
   };
 
   return (
@@ -109,22 +157,9 @@ const TableThree = () => {
               />
             </svg>
           </div>
-          <CsvDownloadButton
-            data={prkData}
-            filename="Guru_vashisht_parking.csv"
-            style={styles.downloadButton}
-            headers={[
-              'Customer Name',
-              'Vehivle No.',
-              'Phone No.',
-              'Duration',
-              'Entry Time',
-              'Exit Time',
-              'Amount',
-            ]}
-          >
+          <button onClick={exportToExcel} style={styles.downloadButton}>
             Download Data
-          </CsvDownloadButton>
+          </button>
         </div>
       </div>
 
